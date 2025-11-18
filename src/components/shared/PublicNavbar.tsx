@@ -1,44 +1,77 @@
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 
 const PublicNavbar = () => {
   const navItems = [
-    { name: "Home", href: "/" },
-    { name: "Consaltation", href: "/consaltation" },
-    { name: "Health Plan", href: "/health-plan" },
-    { name: "Diagnostics", href: "/diagnostics" },
-    { name: "NGOs", href: "/ngos" },
+    { href: "#", label: "Consultation" },
+    { href: "#", label: "Health Plans" },
+    { href: "#", label: "Medicine" },
+    { href: "#", label: "Diagnostics" },
+    { href: "#", label: "NGOs" },
   ]
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-16 border-b w-full items-center justify-around bg-background/95 px-4 shadow-md">
-          <div>
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur  dark:bg-background/95">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
 
-            <Link className="flex items-center justify-center text-xl font-bold text-primary" href={"/"}>Care Point</Link>
-          </div>
+          {/* logo  */}
+          <Link href="/" className="flex items-center space-x-2">
+            <span className="text-xl font-bold text-primary">Care Point</span>
+          </Link>
 
-          <nav>
-              <ul className="flex gap-6">
-                  {
-                    navItems.map(item => (
-                      <li key={item.name}>
-                        <link href={item.href} className="text-sm font-medium text-muted-foreground hover:text-primary">
-                          {
-                            item.name
-                          }
-                        </link>
-                      </li>
-                    ))
-                  }
-              </ul>
+          {/* nav items  */}
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+            {navItems.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
-          <div>
-              <Link href={"/login"}>
+          {/* login button  */}
+          <div className="hidden md:flex items-center space-x-2">
+              <Link href="/login" className="text-lg font-medium">
                 <Button>Login</Button>
               </Link>
           </div>
 
+         {/* Mobile Menu */}
+
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline"> <Menu/> </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] p-4">
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+              <nav className="flex flex-col space-y-4 mt-8">
+                {navItems.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-lg font-medium"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="border-t pt-4 flex flex-col space-y-4">
+                  <div className="flex justify-center"></div>
+                  <Link href="/login" className="text-lg font-medium">
+                    <Button>Login</Button>
+                  </Link>
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        </div>
       </header>
     </>
   );
