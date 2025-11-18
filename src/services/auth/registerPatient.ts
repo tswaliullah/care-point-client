@@ -14,7 +14,7 @@ export const registerPatient = async (_currentState : any, formData: any ) : Pro
         const newFormData = new FormData();
         newFormData.append("data", JSON.stringify(registerData))
 
-        const res = await fetch("http://localhost:5000/api/v1", {
+        const res = await fetch("http://localhost:5000/api/v1/user/create-patient", {
             method: "POST",
             body: newFormData
         }).then(res => res.json());

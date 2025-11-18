@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 const RegisterForm = () => {
-const { state, formAction, isPending } = useActionState(registerPatient, null);
+const [state, formAction, isPending] = useActionState(registerPatient, null);
 
     console.log("state: ", state)
 
@@ -62,7 +62,7 @@ const { state, formAction, isPending } = useActionState(registerPatient, null);
         </div>
         <FieldGroup className="mt-4">
           <Field>
-            <Button type="submit" disabled={isPending}>
+            <Button className="cursor-pointer" type="submit" disabled={isPending}>
               {isPending ? "Creating Account..." : "Create Account"}
             </Button>
 
