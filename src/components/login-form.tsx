@@ -9,6 +9,11 @@ import { Input } from "./ui/input";
 const LoginForm = () => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
 
+  console.log({
+    state,
+      
+  })
+
   const getFieldError = (fieldName: string) => {
     if (state && state.errors) {
       const error = state.errors.find((err: any) => err.field === fieldName);

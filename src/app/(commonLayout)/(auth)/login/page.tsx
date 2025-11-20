@@ -8,7 +8,7 @@ const LoginPage = () => {
           <h1 className="text-3xl font-bold">Welcome Back</h1>
           <p className="text-gray-500">
             Enter your credentials to access your account
-          </p>
+          </p> 
         </div>
         <LoginForm />
       </div>
