@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 type UserRole = 'ADMIN' | 'DOCTOR' | 'PATIENT';
  
@@ -46,9 +47,6 @@ const isRouteMatches = (pathname: string, routes: RouteConfig) : boolean => {
   return routes.patterns.some((pattern: RegExp) => pattern.test(pathname));
 }
 
-export function proxy(request: NextRequest) {
-  return NextResponse.redirect(new URL('/home', request.url))
-}
 
 
 const getRouteOwener = (pathname: string): 'ADMIN' | 'DOCTOR' | 'PATIENT' | 'COMMON' | null => {
@@ -85,6 +83,32 @@ const getDefaultDasboardRoute = (role: UserRole) : string => {
       return '/';
   }
 }
+
+
+
+export function proxy(request: NextRequest) {
+
+  const pathname = request.nextUrl.pathname;
+
+
+  const accessToken = request.cookies.get('accessToken')?.value || null;
+
+  const useRole: UserRole | null = null;
+
+  if (accessToken) {
+    const verifyToken: JwtPayload | string = jwt.verify(accessToken, process.env.JWT_SECRET as string);
+
+    if (typeof verifyToken === 'string') {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+
+
+  
+
+  return NextResponse.next();
+}
+
 
 // match the protected route
 export const config = {
