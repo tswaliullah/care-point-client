@@ -2,11 +2,11 @@
 "use server"
 
 import { getDefaultDashboardRoute, isValidRedirectForRole, UserRole } from "@/lib/auth-utils";
-import { setCookie } from "./tokenHandlers";
-import { redirect } from "next/navigation";
 import { parse } from "cookie";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { redirect } from "next/navigation";
 import z from "zod";
+import { setCookie } from "./tokenHandlers";
 
 const loginValidationZodSchema = z.object({
     email: z.email({
@@ -30,9 +30,6 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
         }
 
         const validatedFields = loginValidationZodSchema.safeParse(loginData);
-
-
-        console.log({ validatedFields }, "login val");
 
         if (!validatedFields.success) {
             return {
@@ -97,10 +94,7 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
             path: refreshTokenObject.Path || "/",
             sameSite: refreshTokenObject['SameSite'] || "none",
         });
-
-        console.log({ accessTokenObject, refreshTokenObject }, "tokens");
-
-        const verifiedToken: JwtPayload | string = jwt.verify(accessTokenObject.accessToken, "LONG@LONG@GOMYSECRET" as string);
+        const verifiedToken: JwtPayload | string = jwt.verify(accessTokenObject.accessToken, process.env.JWT_SECRET as string);
 
         if (typeof verifiedToken === "string") {
             throw new Error("Invalid token");
