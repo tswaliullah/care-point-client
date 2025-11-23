@@ -1,9 +1,11 @@
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Menu } from "lucide-react";
+import LogoutButton from "./LogoutButton";
 import Link from "next/link";
+import { getCookie } from "@/services/auth/tokenHandlers";
 
-const PublicNavbar = () => {
+const PublicNavbar = async () => {
   const navItems = [
     { href: "#", label: "Consultation" },
     { href: "#", label: "Health Plans" },
@@ -11,6 +13,9 @@ const PublicNavbar = () => {
     { href: "#", label: "Diagnostics" },
     { href: "#", label: "NGOs" },
   ]
+
+  const accessToken = await getCookie("accessToken") || null;
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur  dark:bg-background/95">
@@ -36,9 +41,15 @@ const PublicNavbar = () => {
 
           {/* login button  */}
           <div className="hidden md:flex items-center space-x-2">
-              <Link href="/login" className="text-lg font-medium">
+           {
+            accessToken ? (
+              <LogoutButton />
+            ) : (
+              <Link href="/login" className="text-lg font-medium cursor-pointer">
                 <Button>Login</Button>
               </Link>
+            )
+           }
           </div>
 
          {/* Mobile Menu */}
@@ -62,7 +73,7 @@ const PublicNavbar = () => {
                 ))}
                 <div className="border-t pt-4 flex flex-col space-y-4">
                   <div className="flex justify-center"></div>
-                  <Link href="/login" className="text-lg font-medium">
+                  <Link href="/login" className="text-lg font-medium cursor-pointer">
                     <Button>Login</Button>
                   </Link>
                 </div>

@@ -2,10 +2,10 @@
 "use server"
 
 import { getDefaultDashboardRoute, isValidRedirectForRole, UserRole } from "@/lib/auth-utils";
-import { setCookie } from "@/lib/token-handlar";
+import { setCookie } from "./tokenHandlers";
+import { redirect } from "next/navigation";
 import { parse } from "cookie";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { redirect } from "next/navigation";
 import z from "zod";
 
 const loginValidationZodSchema = z.object({
@@ -31,6 +31,9 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
 
         const validatedFields = loginValidationZodSchema.safeParse(loginData);
 
+
+        console.log({ validatedFields }, "login val");
+
         if (!validatedFields.success) {
             return {
                 success: false,
@@ -50,6 +53,8 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
                 "Content-Type": "application/json",
             },
         });
+
+        const result = await res.json();
 
         const setCookieHeaders = res.headers.getSetCookie();
 
@@ -76,6 +81,7 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
             throw new Error("Tokens not found in cookies");
         }
 
+
         await setCookie("accessToken", accessTokenObject.accessToken, {
             secure: true,
             httpOnly: true,
@@ -91,7 +97,10 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
             path: refreshTokenObject.Path || "/",
             sameSite: refreshTokenObject['SameSite'] || "none",
         });
-        const verifiedToken: JwtPayload | string = jwt.verify(accessTokenObject.accessToken, process.env.JWT_SECRET as string);
+
+        console.log({ accessTokenObject, refreshTokenObject }, "tokens");
+
+        const verifiedToken: JwtPayload | string = jwt.verify(accessTokenObject.accessToken, "LONG@LONG@GOMYSECRET" as string);
 
         if (typeof verifiedToken === "string") {
             throw new Error("Invalid token");
@@ -100,14 +109,20 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
 
         const userRole: UserRole = verifiedToken.role;
 
+        if (!result.success) {
+            throw new Error(result.message || "Login failed");
+        }
+
 
         if (redirectTo) {
             const requestedPath = redirectTo.toString();
             if (isValidRedirectForRole(requestedPath, userRole)) {
-                redirect(requestedPath);
+                redirect(`${requestedPath}?loggedIn=true`);
             } else {
-                redirect(getDefaultDashboardRoute(userRole));
+                redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
             }
+        } else {
+            redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
         }
 
     } catch (error: any) {
@@ -116,6 +131,6 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
             throw error;
         }
         console.log(error);
-        return { error: "Login failed" };
+        return { success: false, message: `${process.env.NODE_ENV === 'development' ? error.message : "Login Failed. You might have entered incorrect email or password."}` };
     }
 }

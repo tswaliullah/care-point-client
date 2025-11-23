@@ -1,8 +1,8 @@
 import type { NextRequest } from 'next/server';
 import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from '@/lib/auth-utils';
 import { NextResponse } from 'next/server';
-import { deleteCookie, getCookie } from '@/lib/token-handlar';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { deleteCookie, getCookie } from '@/services/auth/tokenHandlers';
 
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
@@ -13,7 +13,7 @@ export async function proxy(request: NextRequest) {
 
     let userRole: UserRole | null = null;
     if (accessToken) {
-        const verifiedToken: JwtPayload | string = jwt.verify(accessToken, process.env.JWT_SECRET as string);
+        const verifiedToken: JwtPayload | string = jwt.verify(accessToken, "LONG@LONG@GOMYSECRET" as string);
 
         if (typeof verifiedToken === "string") {
            await deleteCookie("accessToken");
