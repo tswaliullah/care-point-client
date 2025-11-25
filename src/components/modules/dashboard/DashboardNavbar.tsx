@@ -7,7 +7,7 @@ import { getNavItemsByRole } from "@/lib/navItems.config";
 const DashboardNavbar = async () => {
   const userInfo = (await getUserInfo()) as UserInfo;
 
-  console.log(userInfo);
+  console.log(userInfo);  // celebrate
 
 
   const navItems = getNavItemsByRole(userInfo?.role);

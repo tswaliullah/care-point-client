@@ -94,6 +94,9 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
             path: refreshTokenObject.Path || "/",
             sameSite: refreshTokenObject['SameSite'] || "none",
         });
+
+        console.log("login user: ", accessTokenObject.accessToken);
+
         const verifiedToken: JwtPayload | string = jwt.verify(accessTokenObject.accessToken, process.env.JWT_SECRET as string);
 
         if (typeof verifiedToken === "string") {
