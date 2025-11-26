@@ -1,5 +1,4 @@
 import { getCookie } from "@/services/auth/tokenHandlers";
-import LogoutButton from "@/components/shared/LogoutButton";
 import React from "react";
 import DashbaordSidebar from "@/components/modules/dashboard/DashbaordSidebar";
 import DashboardNavbar from "@/components/modules/dashboard/DashboardNavbar";
